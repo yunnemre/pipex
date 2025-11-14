@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/29 04:11:22 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/15 01:46:57 by ydinler          ###   ########.fr       */
+/*   Created: 2025/11/14 13:28:35 by ydinler           #+#    #+#             */
+/*   Updated: 2025/11/15 01:44:29 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static	void	close_fd(int *fd)
 {
@@ -36,7 +36,7 @@ static void	exec_cmd(char *cmd, int in_fd, int out_fd, t_pipex *data)
 	error_man(EXEC_ERR, data);
 }
 
-void	pipex(char **argv, t_pipex *data)
+static void	here_pipex(char **args, t_pipex *data)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -49,16 +49,47 @@ void	pipex(char **argv, t_pipex *data)
 	if (pid == 0)
 	{
 		close(fd[0]);
-		exec_cmd(argv[2], data->fd_in, fd[1], data);
+		exec_cmd(args[3], data->fd_in, fd[1], data);
 	}
+	close(fd[1]);
+	close(data->fd_in);
 	pid = fork();
 	if (pid < 0)
 		error_man(FORK_ERR, data);
 	if (pid == 0)
 	{
 		close(fd[1]);
-		exec_cmd(argv[3], fd[0], data->fd_out, data);
+		exec_cmd(args[4], fd[0], data->fd_out, data);
 	}
 	close_fd(fd);
 	waitpid(pid, NULL, 0);
 }
+
+void	here_doc(char **args, t_pipex *data)
+{
+	char	*line;
+	int		fd[2];
+
+	if (pipe(fd) == -1)
+		error_man(PIPE_ERR, data);
+	while (1)
+	{
+		write(0, "> ", 2);
+		line = get_next_line(0);
+		if (!ft_strncmp(line, args[2], ft_strlen(line) - 1))
+		{
+			free(line);
+			break ;
+		}
+		write(fd[1], line, ft_strlen(line));
+		free(line);
+	}
+	close(fd[1]);
+	data->fd_in = fd[0];
+	data->fd_out = open(args[5], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (data->fd_out < 0)
+		error_man(OPEN_ERR, data);
+	here_pipex(args, data);
+}
+
+//cat << END | grep a >> result.txt

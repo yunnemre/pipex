@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   arg_man.c                                          :+:      :+:    :+:   */
+/*   arg_man_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 00:50:11 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/09 22:12:35 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/15 01:43:53 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 char	*ft_strjoin_with_slash(char **paths, char *cmd)
 {
@@ -31,7 +31,7 @@ char	*ft_strjoin_with_slash(char **paths, char *cmd)
 	return (NULL);
 }
 
-static int	ft_find_path(char **envp)
+static int	ft_find_path_index(char **envp)
 {
 	int	i;
 
@@ -49,16 +49,16 @@ static void	open_files(char **args, t_pipex *data)
 	data->fd_in = open(args[1], O_RDONLY);
 	if (data->fd_in < 0)
 		error_man(OPEN_ERR, data);
-	data->fd_out = open(args[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	data->fd_out = open(args[data->n - 1], O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (data->fd_out < 0)
 		error_man(OPEN_ERR, data);
 }
 
-static void	find_path(char **envp, t_pipex *data)
+void	find_path(char **envp, t_pipex *data)
 {
 	int	pth_index;
 
-	pth_index = ft_find_path(envp);
+	pth_index = ft_find_path_index(envp);
 	if (pth_index == -1)
 		error_man(PATH_NOT_FOUND, data);
 	data->paths = ft_split(envp[pth_index] + 5, ':');

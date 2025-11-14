@@ -1,22 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 04:11:22 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/15 01:46:57 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/14 19:00:54 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-
-static	void	close_fd(int *fd)
-{
-	close(fd[0]);
-	close(fd[1]);
-}
+#include "pipex_bonus.h"
 
 static void	exec_cmd(char *cmd, int in_fd, int out_fd, t_pipex *data)
 {
@@ -36,29 +30,49 @@ static void	exec_cmd(char *cmd, int in_fd, int out_fd, t_pipex *data)
 	error_man(EXEC_ERR, data);
 }
 
+static void	open_next_pipe(int fd[2], t_pipex *data)
+{
+	if (pipe(fd) == -1)
+		error_man(PIPE_ERR, data);
+}
+
+static pid_t	create_child(char *cmd, int in_fd, int out_fd, t_pipex *data)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		error_man(FORK_ERR, data);
+	if (pid == 0)
+		exec_cmd(cmd, in_fd, out_fd, data);
+	return (pid);
+}
+
+static void	update_fds(int fd[2], int *in_fd, t_pipex *data)
+{
+	close(fd[1]);
+	if (*in_fd != data->fd_in)
+		close(*in_fd);
+	*in_fd = fd[0];
+}
+
 void	pipex(char **argv, t_pipex *data)
 {
 	int		fd[2];
+	int		in_fd;
 	pid_t	pid;
+	int		i;
 
-	if (pipe(fd) == -1)
-		error_man(PIPE_ERR, data);
-	pid = fork();
-	if (pid < 0)
-		error_man(FORK_ERR, data);
-	if (pid == 0)
+	in_fd = data->fd_in;
+	i = 1;
+	while (++i < data->n - 2)
 	{
-		close(fd[0]);
-		exec_cmd(argv[2], data->fd_in, fd[1], data);
+		open_next_pipe(fd, data);
+		create_child(argv[i], in_fd, fd[1], data);
+		update_fds(fd, &in_fd, data);
 	}
-	pid = fork();
-	if (pid < 0)
-		error_man(FORK_ERR, data);
-	if (pid == 0)
-	{
-		close(fd[1]);
-		exec_cmd(argv[3], fd[0], data->fd_out, data);
-	}
-	close_fd(fd);
-	waitpid(pid, NULL, 0);
+	pid = create_child(argv[i], in_fd, data->fd_out, data);
+	while (wait(NULL) > 0)
+		;
+	(void)pid;
 }

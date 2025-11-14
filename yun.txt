@@ -1,1 +1,7 @@
-a1fsr
+apple
+banana
+apple
+cherry
+apple banana
+orange
+banana applea1
