@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   here_doc.c                                         :+:      :+:    :+:   */
+/*   here_doc_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 13:28:35 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/15 01:44:29 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/15 01:51:35 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	exec_cmd(char *cmd, int in_fd, int out_fd, t_pipex *data)
 	while (com[i])
 		free(com[i++]);
 	free(com);
+	free(path);
 	error_man(EXEC_ERR, data);
 }
 

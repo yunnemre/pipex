@@ -6,7 +6,7 @@
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 04:11:22 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/15 01:46:57 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/15 01:52:42 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	exec_cmd(char *cmd, int in_fd, int out_fd, t_pipex *data)
 	while (com[i])
 		free(com[i++]);
 	free(com);
+	free(path);
 	error_man(EXEC_ERR, data);
 }
 
