@@ -61,6 +61,7 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME)
+	$(RM) $(NAME)_bonus
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 

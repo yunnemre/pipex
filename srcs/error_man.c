@@ -6,7 +6,7 @@
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 01:48:49 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/09 22:13:07 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/16 01:36:51 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,14 @@ void	error_man(int code, t_pipex *data)
 		perror ("Malloc error");
 	else if (code == PATH_NOT_FOUND)
 		perror ("Path not found error");
-	else if (PIPE_ERR)
+	else if (code == PIPE_ERR)
 		perror("Pipe Error");
-	else if (FORK_ERR)
+	else if (code == FORK_ERR)
 		perror("Fork Error");
-	else if (EXEC_ERR)
+	else if (code == EXEC_ERR)
 		perror("Execve Error");
+	else if (code == COMMAND_NOT_FOUND)
+		perror("Command Not Found");
 	clear_all(data);
 	exit(1);
 }
