@@ -6,37 +6,34 @@
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 08:51:07 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/16 02:09:25 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/16 02:56:45 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-int	check_com(char **args, t_pipex *data, int mode)
+int	check_com(char **args, t_pipex *data, int tour, int mode)
 {
 	char	*res;
+	char	**com;
 	int		i;
+	int		j;
 
-	i = 2;
-	if (mode == 0)
+	if (mode == 1)
+		i = 1;
+	else
+		i = 2;
+	while (++i < tour)
 	{
-		while (++i < 5)
-		{
-			res = ft_strjoin_with_slash(data->paths, args[i]);
-			if (!res || !*res)
-				return (1);
-			free(res);
-		}
-	}
-	else if (mode == 1)
-	{
-		while (i < data->n -1)
-		{
-			res = ft_strjoin_with_slash(data->paths, args[i++]);
-			if (!res || !*res)
-				return (1);
-			free(res);
-		}
+		com = ft_split(args[i], ' ');
+		res = ft_strjoin_with_slash(data->paths, com[0]);
+		j = 0;
+		while (com[j])
+			free(com[j++]);
+		free(com);
+		if (!res || !*res)
+			return (1);
+		free(res);
 	}
 	return (0);
 }
@@ -54,15 +51,13 @@ int	main(int argc, char **args, char **envp)
 	else if (argc == 6 && !(ft_strncmp(args[1], "here_doc", 9)))
 	{
 		find_path(envp, &data);
-		if (check_com(args, &data, 0))
-			error_man(COMMAND_NOT_FOUND, &data);
 		here_doc(args, &data);
 		clear_all(&data);
 	}
 	else if (argc >= 5)
 	{
 		arg_man(args, envp, &data);
-		if (check_com(args, &data, 1))
+		if (check_com(args, &data, data.n - 1, 1))
 			error_man(COMMAND_NOT_FOUND, &data);
 		pipex(args, &data);
 		clear_all(&data);

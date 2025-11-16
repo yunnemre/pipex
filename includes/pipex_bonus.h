@@ -6,7 +6,7 @@
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 08:45:34 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/16 02:25:28 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/16 02:46:29 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,5 @@ void	clear_all(t_pipex *data);
 void	pipex(char **argv, t_pipex *data);
 
 void	here_doc(char **args, t_pipex *data);
-int		check_com(char **args, t_pipex *data, int mode);
+int		check_com(char **args, t_pipex *data, int tour, int mode);
 #endif

@@ -6,7 +6,7 @@
 /*   By: ydinler <ydinler@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 13:28:35 by ydinler           #+#    #+#             */
-/*   Updated: 2025/11/15 01:51:35 by ydinler          ###   ########.fr       */
+/*   Updated: 2025/11/16 03:01:58 by ydinler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ void	here_doc(char **args, t_pipex *data)
 	close(fd[1]);
 	data->fd_in = fd[0];
 	data->fd_out = open(args[5], O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	if (data->fd_out < 0)
-		error_man(OPEN_ERR, data);
+	if (check_com(args, data, 5, 0))
+		error_man(COMMAND_NOT_FOUND, data);
 	here_pipex(args, data);
 }
 
